@@ -66,6 +66,14 @@
 # endif
 #endif
 
+#ifndef GOOGLE_GLOG_DLL_PD_DECL
+# if defined(_WIN32) && !defined(__CYGWIN__)
+#   define GOOGLE_GLOG_DLL_PD_DECL  __declspec(dllimport)
+# else
+#   define GOOGLE_GLOG_DLL_PD_DECL
+# endif
+#endif
+
 // We care a lot about number of bits things take up.  Unfortunately,
 // systems define their bit-specific ints in a lot of different ways.
 // We use our own way, and have a typedef to get there.
