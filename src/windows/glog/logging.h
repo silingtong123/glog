@@ -70,6 +70,14 @@
 # endif
 #endif
 
+#ifndef GOOGLE_GLOG_DLL_PD_DECL
+# if defined(_WIN32) && !defined(__CYGWIN__)
+#   define GOOGLE_GLOG_DLL_PD_DECL  __declspec(dllimport)
+# else
+#   define GOOGLE_GLOG_DLL_PD_DECL
+# endif
+#endif
+
 // We care a lot about number of bits things take up.  Unfortunately,
 // systems define their bit-specific ints in a lot of different ways.
 // We use our own way, and have a typedef to get there.
@@ -88,6 +96,27 @@
 
 #if 0
 #include <gflags/gflags.h>
+
+
+#define PD_DECLARE_VARIABLE(type, shorttype, name) \
+  /* We always want to import declared variables, dll or no */ \
+  namespace fL##shorttype { extern GOOGLE_GLOG_DLL_PD_DECL type FLAGS_##name; } \
+  using fL##shorttype::FLAGS_##name
+
+#define PD_DECLARE_bool(name) \
+  PD_DECLARE_VARIABLE(bool, B, name)
+
+#define PD_DECLARE_int32(name) \
+  PD_DECLARE_VARIABLE(::GFLAGS_NAMESPACE::int32, I, name)
+
+#define PD_DECLARE_string(name) \
+  /* We always want to import declared variables, dll or no */ \
+  namespace fLS { \
+  extern GOOGLE_GLOG_PD_DLL_DECL ::fLS::clstring& FLAGS_##name; \
+  } \
+  using fLS::FLAGS_##name
+
+
 #endif
 
 namespace google {
@@ -335,50 +364,50 @@ typedef unsigned __int64 uint64;
 #endif
 
 // Set whether log messages go to stderr instead of logfiles
-DECLARE_bool(logtostderr);
+PD_DECLARE_bool(logtostderr);
 
 // Set whether log messages go to stderr in addition to logfiles.
-DECLARE_bool(alsologtostderr);
+PD_DECLARE_bool(alsologtostderr);
 
 // Set color messages logged to stderr (if supported by terminal).
-DECLARE_bool(colorlogtostderr);
+PD_DECLARE_bool(colorlogtostderr);
 
 // Log messages at a level >= this flag are automatically sent to
 // stderr in addition to log files.
-DECLARE_int32(stderrthreshold);
+PD_DECLARE_int32(stderrthreshold);
 
 // Set whether the log prefix should be prepended to each line of output.
-DECLARE_bool(log_prefix);
+PD_DECLARE_bool(log_prefix);
 
 // Log messages at a level <= this flag are buffered.
 // Log messages at a higher level are flushed immediately.
-DECLARE_int32(logbuflevel);
+PD_DECLARE_int32(logbuflevel);
 
 // Sets the maximum number of seconds which logs may be buffered for.
-DECLARE_int32(logbufsecs);
+PD_DECLARE_int32(logbufsecs);
 
 // Log suppression level: messages logged at a lower level than this
 // are suppressed.
-DECLARE_int32(minloglevel);
+PD_DECLARE_int32(minloglevel);
 
 // If specified, logfiles are written into this directory instead of the
 // default logging directory.
-DECLARE_string(log_dir);
+PD_DECLARE_string(log_dir);
 
 // Set the log file mode.
-DECLARE_int32(logfile_mode);
+PD_DECLARE_int32(logfile_mode);
 
 // Sets the path of the directory into which to put additional links
 // to the log files.
-DECLARE_string(log_link);
+PD_DECLARE_string(log_link);
 
-DECLARE_int32(v);  // in vlog_is_on.cc
+PD_DECLARE_int32(v);  // in vlog_is_on.cc
 
 // Sets the maximum log file size (in MB).
-DECLARE_int32(max_log_size);
+PD_DECLARE_int32(max_log_size);
 
 // Sets whether to avoid logging to the disk if the disk is full.
-DECLARE_bool(stop_logging_if_full_disk);
+PD_DECLARE_bool(stop_logging_if_full_disk);
 
 #ifdef MUST_UNDEF_GFLAGS_DECLARE_MACROS
 #undef MUST_UNDEF_GFLAGS_DECLARE_MACROS
