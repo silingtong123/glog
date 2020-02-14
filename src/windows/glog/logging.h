@@ -112,7 +112,7 @@
 #define PD_DECLARE_string(name) \
   /* We always want to import declared variables, dll or no */ \
   namespace fLS { \
-  extern GOOGLE_GLOG_PD_DLL_DECL ::fLS::clstring& FLAGS_##name; \
+  extern GOOGLE_GLOG_DLL_PD_DECL ::fLS::clstring& FLAGS_##name; \
   } \
   using fLS::FLAGS_##name
 
